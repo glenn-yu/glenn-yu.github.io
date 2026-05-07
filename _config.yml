@@ -1,0 +1,43 @@
+# Site
+title: Glenn Yu
+tagline: Android Developer
+description: >-
+  Android, Kotlin, 그리고 모바일 개발에 대한 기록.
+
+url: "https://glenn-yu.github.io"
+baseurl: ""
+
+# Author
+author:
+  name: Glenn Yu
+  email: nasmediagyyoo@gmail.com
+  github: glenn-yu
+
+# Build
+markdown: kramdown
+highlighter: rouge
+permalink: /posts/:title/
+timezone: Asia/Seoul
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Pagination (display N posts on home)
+paginate: 5
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor/
+  - .gitignore
