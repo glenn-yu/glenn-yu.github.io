@@ -6,8 +6,12 @@
     </a>
     <nav class="site-nav">
       <a href="{{ '/' | relative_url }}">Home</a>
+      <a href="{{ '/now/' | relative_url }}">Now</a>
+      <a href="{{ '/uses/' | relative_url }}">Uses</a>
       <a href="{{ '/about/' | relative_url }}">About</a>
-      <a href="https://github.com/{{ site.author.github }}" target="_blank" rel="noopener">GitHub</a>
+      <button type="button" class="palette-trigger" aria-label="Open command palette" title="Cmd/Ctrl + K">
+        <kbd>⌘K</kbd>
+      </button>
     </nav>
   </div>
 </header>

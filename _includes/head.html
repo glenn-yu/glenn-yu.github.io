@@ -14,5 +14,24 @@
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
+<!-- Pre-paint init: apply saved theme + flag boot-pending (avoids flash) -->
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('glenn:theme');
+    if (t) document.documentElement.setAttribute('data-theme', t);
+    if (sessionStorage.getItem('glenn:boot-seen') !== '1') {
+      document.documentElement.classList.add('boot-pending');
+    }
+    // Safety: if JS fails, reveal page after 4s anyway
+    setTimeout(function () {
+      document.documentElement.classList.remove('boot-pending');
+    }, 4000);
+  } catch (e) {
+    document.documentElement.classList.remove('boot-pending');
+  }
+})();
+</script>
+
 {% feed_meta %}
 {% seo %}

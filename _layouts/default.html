@@ -11,5 +11,22 @@
     </div>
   </main>
   {% include footer.html %}
+
+  <script>
+    window.SITE_DATA = {
+      pages: [
+        { title: "Home",  url: "{{ '/' | relative_url }}" },
+        { title: "About", url: "{{ '/about/' | relative_url }}" },
+        { title: "Now",   url: "{{ '/now/' | relative_url }}" },
+        { title: "Uses",  url: "{{ '/uses/' | relative_url }}" }
+      ],
+      posts: [
+        {%- for p in site.posts -%}
+          { title: {{ p.title | jsonify }}, url: {{ p.url | relative_url | jsonify }}, date: "{{ p.date | date: '%Y.%m.%d' }}" }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    };
+  </script>
+  <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 </body>
 </html>
