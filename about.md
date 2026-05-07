@@ -28,15 +28,29 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **Web/BE** — Spring Boot, PHP, Node.js
 - **Infra** — GitHub Actions, Docker
 
+## Projects
+
+### 🍿 SnackPlay (스낵플레이)
+
+> 데이터 기반 캐주얼 게임 & 리워드 플랫폼.
+> 짧게 즐기는 캐주얼 게임 + 실시간 랭킹 + 리워드.
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.snackplay)
+
+- **Play Store** — [com.gwangy.snackplay](https://play.google.com/store/apps/details?id=com.gwangy.snackplay)
+- **소개** — [gwangy.com](https://gwangy.com)
+
+## Links
+
+- 🌐 **Personal site** — [gwangy.com](https://gwangy.com)
+- 📒 **Naver blog** — [blog.naver.com/kcskiller](https://blog.naver.com/kcskiller)
+- 💻 **GitHub** — [@{{ site.author.github }}](https://github.com/{{ site.author.github }})
+- ✉️ **Email** — [{{ site.author.email }}](mailto:{{ site.author.email }})
+
 ## Pages
 
 - 📝 [Blog](/) — 글
 - 🛠️ [Uses](/uses/) — 장비·도구
 - ⚡ [Now](/now/) — 요즘 뭐하는지
-
-## Get in touch
-
-- ✉️ Email — [{{ site.author.email }}](mailto:{{ site.author.email }})
-- 💻 GitHub — [@{{ site.author.github }}](https://github.com/{{ site.author.github }})
 
 > 💡 `Cmd+K` (Mac) / `Ctrl+K` (Win) 누르면 빠른 탐색이 열립니다.

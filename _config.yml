@@ -10,8 +10,10 @@ baseurl: ""
 # Author
 author:
   name: Glenn Yu
-  email: nasmediagyyoo@gmail.com
+  email: gwangy.yu@gmail.com
   github: glenn-yu
+  website: https://gwangy.com
+  naver_blog: https://blog.naver.com/kcskiller
 
 # Build
 markdown: kramdown
