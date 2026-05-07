@@ -1,0 +1,48 @@
+---
+layout: default
+title: 404 — RouteNotFoundException
+permalink: /404.html
+---
+
+<section class="error-page">
+  <div class="crash-card">
+    <div class="crash-bar">
+      <span class="crash-dot crash-dot-red"></span>
+      <span class="crash-dot crash-dot-yellow"></span>
+      <span class="crash-dot crash-dot-green"></span>
+      <span class="crash-bar-title">io.glenn.site has stopped</span>
+    </div>
+    <div class="crash-body">
+<pre class="crash-stack"><span class="crash-line crash-line-fatal">FATAL EXCEPTION: main</span>
+<span class="crash-line crash-line-meta">Process: io.glenn.site, PID: <span class="crash-pid">404</span></span>
+<span class="crash-line crash-line-exc">com.gwangy.site.RouteNotFoundException: <span class="crash-msg">no route matched <span id="bad-path">this URL</span></span></span>
+    at com.gwangy.site.Router.resolve(Router.kt:42)
+    at com.gwangy.site.PageRenderer.render(PageRenderer.kt:88)
+    at com.gwangy.site.NavigationStack.push(NavigationStack.kt:117)
+    at com.gwangy.site.MainActivity.onCreate(MainActivity.kt:23)
+    at android.app.Activity.performCreate(Activity.java:7136)
+    at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2902)
+<span class="crash-line crash-line-caused">Caused by: java.lang.IllegalStateException: page does not exist</span>
+    ... 6 more</pre>
+    </div>
+  </div>
+
+  <div class="error-actions">
+    <h1 class="error-title">404 · Not Found</h1>
+    <p class="error-desc">
+      찾으시는 페이지가 없어요. URL 이 잘못됐거나, 글이 옮겨졌거나, 제가 망가뜨렸을 수 있습니다.
+    </p>
+    <div class="error-cta">
+      <a class="btn btn-primary" href="{{ '/' | relative_url }}">← 홈으로</a>
+      <button type="button" class="btn btn-ghost palette-trigger">⌘K · 빠른 탐색</button>
+    </div>
+    <p class="error-hint">힌트: <kbd>Cmd</kbd>/<kbd>Ctrl</kbd> + <kbd>K</kbd> 로 페이지·글 검색이 가능합니다.</p>
+  </div>
+</section>
+
+<script>
+(function () {
+  var el = document.getElementById('bad-path');
+  if (el) el.textContent = '"' + (location.pathname + location.search).slice(0, 80) + '"';
+})();
+</script>
