@@ -781,3 +781,23 @@ body.crt-mode::before {
 .post-content h2:hover .heading-anchor,
 .post-content h3:hover .heading-anchor,
 .heading-anchor:focus-visible { opacity: 1; }
+
+/* Comments (giscus) */
+.post-comments {
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid var(--border);
+}
+.comments-title {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.comments-hint {
+  margin: 0 0 20px;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+}
+.giscus, .giscus-frame { width: 100%; }
+.giscus-frame { color-scheme: normal; }

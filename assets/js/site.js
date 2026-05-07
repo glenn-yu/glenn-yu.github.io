@@ -225,7 +225,13 @@
     else next = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    setGiscusTheme(next);
     showToast('theme=' + next);
+  }
+  function setGiscusTheme(t) {
+    var iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe || !iframe.contentWindow) return;
+    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: t } } }, 'https://giscus.app');
   }
 
   // ============================================================
