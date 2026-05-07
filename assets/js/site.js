@@ -265,11 +265,65 @@
   }
 
   // ============================================================
+  // 7. Post enhancements: copy code, heading anchors
+  // ============================================================
+  function enhancePosts() {
+    var content = document.querySelector('.post-content');
+    if (!content) return;
+
+    // Code copy buttons
+    content.querySelectorAll('pre').forEach(function (pre) {
+      if (pre.querySelector('.copy-btn')) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', '코드 복사');
+      btn.addEventListener('click', function () {
+        var code = (pre.querySelector('code') || pre).textContent;
+        var done = function () {
+          btn.textContent = 'Copied!';
+          btn.classList.add('is-copied');
+          setTimeout(function () {
+            btn.textContent = 'Copy';
+            btn.classList.remove('is-copied');
+          }, 1500);
+        };
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(done, function () {});
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = code;
+          ta.style.position = 'fixed';
+          ta.style.top = '-1000px';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          document.body.removeChild(ta);
+        }
+      });
+      pre.appendChild(btn);
+    });
+
+    // Heading anchor links (kramdown auto-generates ids)
+    content.querySelectorAll('h2[id], h3[id]').forEach(function (h) {
+      if (h.querySelector('.heading-anchor')) return;
+      var a = document.createElement('a');
+      a.className = 'heading-anchor';
+      a.href = '#' + h.id;
+      a.setAttribute('aria-label', '이 섹션 링크 복사');
+      a.innerHTML = '<span aria-hidden="true">#</span>';
+      h.appendChild(a);
+    });
+  }
+
+  // ============================================================
   // Boot
   // ============================================================
+  function init() { runBoot(); enhancePosts(); }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runBoot);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    runBoot();
+    init();
   }
 })();

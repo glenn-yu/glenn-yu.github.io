@@ -8,6 +8,26 @@
 <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
 <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | absolute_url }}">
 
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="{{ '/assets/favicon.svg' | relative_url }}">
+<link rel="icon" type="image/png" sizes="64x64" href="{{ '/assets/favicon.png' | relative_url }}">
+<link rel="apple-touch-icon" href="{{ '/assets/apple-touch-icon.png' | relative_url }}">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+<meta property="og:site_name" content="{{ site.title }}">
+<meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }} · {{ site.tagline }}{% endif %}">
+<meta property="og:description" content="{{ page.description | default: page.excerpt | default: site.description | strip_html | truncate: 200 }}">
+<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta property="og:image" content="{{ '/assets/og-image.png' | absolute_url }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }} · {{ site.tagline }}{% endif %}">
+<meta name="twitter:description" content="{{ page.description | default: page.excerpt | default: site.description | strip_html | truncate: 200 }}">
+<meta name="twitter:image" content="{{ '/assets/og-image.png' | absolute_url }}">
+
 <!-- Pretendard (한국어 친화 폰트) -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
@@ -34,4 +54,3 @@
 </script>
 
 {% feed_meta %}
-{% seo %}

@@ -23,7 +23,6 @@ timezone: Asia/Seoul
 
 plugins:
   - jekyll-feed
-  - jekyll-seo-tag
   - jekyll-sitemap
 
 # Pagination (display N posts on home)

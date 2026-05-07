@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0e1116"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1c2530" stroke-width="0.6"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect width="1200" height="1200" fill="url(#grid)"/>
+
+  <!-- Top left: brand badge -->
+  <g transform="translate(100, 100)">
+    <rect width="96" height="96" rx="22" fill="#0e1116" stroke="#3ddc84" stroke-opacity="0.5" stroke-width="2"/>
+    <text x="48" y="65" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="54" fill="#3ddc84" text-anchor="middle">G</text>
+    <circle cx="72" cy="68" r="3.5" fill="#3ddc84"/>
+  </g>
+
+  <!-- Top right: window dots + url -->
+  <g transform="translate(1100, 130)" opacity="0.7">
+    <circle cx="-30" cy="-12" r="6" fill="#ff5f57"/>
+    <circle cx="-12" cy="-12" r="6" fill="#febc2e"/>
+    <circle cx="6" cy="-12" r="6" fill="#28c840"/>
+  </g>
+  <text x="1100" y="170" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="22" fill="#6b7785" text-anchor="end">glenn-yu.github.io</text>
+
+  <!-- Center: name + title -->
+  <g transform="translate(100, 540)">
+    <text x="0" y="0" font-family="Helvetica, Arial, sans-serif" font-weight="800" font-size="132" fill="#e6edf3" letter-spacing="-4">Glenn Yu</text>
+    <text x="0" y="80" font-family="Helvetica, Arial, sans-serif" font-weight="500" font-size="48" fill="#a8b3bf">Mobile · Adtech Engineer</text>
+  </g>
+
+  <!-- Bottom: terminal block -->
+  <g transform="translate(100, 920)">
+    <rect x="-16" y="-44" width="1032" height="180" rx="14" fill="#0a0d12" stroke="#1c2530" stroke-width="1.5"/>
+    <g transform="translate(8, -22)" opacity="0.7">
+      <circle cx="0" cy="0" r="4.5" fill="#ff5f57"/>
+      <circle cx="14" cy="0" r="4.5" fill="#febc2e"/>
+      <circle cx="28" cy="0" r="4.5" fill="#28c840"/>
+      <text x="56" y="4" font-family="ui-monospace, monospace" font-size="13" fill="#6b7785">adb logcat -s glenn:*</text>
+    </g>
+    <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="22">
+      <text x="0" y="20"><tspan fill="#6b7785">14:23:02.042  </tspan><tspan fill="#febc2e">D</tspan><tspan fill="#a8b3bf">/init      </tspan><tspan fill="#6b7785">(1234): </tspan><tspan fill="#3ddc84">glenn-yu.github.io booting...</tspan></text>
+      <text x="0" y="56"><tspan fill="#6b7785">14:23:02.118  </tspan><tspan fill="#3ddc84">V</tspan><tspan fill="#a8b3bf">/stack     </tspan><tspan fill="#6b7785">(1234): </tspan><tspan fill="#3ddc84">kotlin · compose · react-native · spring</tspan></text>
+      <text x="0" y="92"><tspan fill="#6b7785">14:23:02.220  </tspan><tspan fill="#3ddc84">I</tspan><tspan fill="#a8b3bf">/lifecycle </tspan><tspan fill="#6b7785">(1234): </tspan><tspan fill="#3ddc84">onResume() — welcome.</tspan></text>
+    </g>
+  </g>
+</svg>
