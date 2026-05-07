@@ -28,6 +28,9 @@ plugins:
 # Pagination (display N posts on home)
 paginate: 5
 
+# 미래 날짜 포스트도 발행 (글 예약·미리보기용)
+future: true
+
 # Defaults
 defaults:
   - scope:
