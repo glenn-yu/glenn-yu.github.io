@@ -682,16 +682,20 @@ body.crt-mode::before {
   color: var(--fg);
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
+.project-card + .project-card { margin-top: 12px; }
 .project-card:hover {
   border-color: var(--fg-muted);
   color: var(--fg);
   transform: translateY(-1px);
 }
 .project-card:hover .project-arrow { color: var(--accent); transform: translateX(2px); }
-.project-emoji {
-  font-size: 1.8rem;
-  line-height: 1;
-  text-align: center;
+.project-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: block;
+  object-fit: cover;
+  background: var(--bg);
 }
 .project-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .project-title {
