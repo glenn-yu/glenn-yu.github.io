@@ -121,6 +121,7 @@
       [
         { kind: 'cmd', title: '🌗 테마 토글 (다크/라이트)', sub: 'theme', action: toggleTheme },
         { kind: 'cmd', title: '🍿 SnackPlay (Google Play)', sub: 'play.google.com', action: function () { window.open('https://play.google.com/store/apps/details?id=com.gwangy.snackplay', '_blank', 'noopener'); } },
+        { kind: 'cmd', title: '🎨 PaletteWeather (Google Play)', sub: 'play.google.com', action: function () { window.open('https://play.google.com/store/apps/details?id=com.gwangy.paletteweather', '_blank', 'noopener'); } },
         { kind: 'cmd', title: '🌐 gwangy.com 으로 이동', sub: 'gwangy.com', action: function () { window.open('https://gwangy.com', '_blank', 'noopener'); } },
         { kind: 'cmd', title: '📒 네이버 블로그', sub: 'blog.naver.com/kcskiller', action: function () { window.open('https://blog.naver.com/kcskiller', '_blank', 'noopener'); } },
         { kind: 'cmd', title: '↗ GitHub 으로 이동', sub: 'github.com/glenn-yu', action: function () { window.open('https://github.com/glenn-yu', '_blank', 'noopener'); } },
