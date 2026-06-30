@@ -34,6 +34,20 @@
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 
+{% if page.math %}
+<!-- MathJax (수식 렌더링: front matter에 math: true 인 글에서만 로드) -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+{% endif %}
+
 <!-- Pre-paint init: apply saved theme + flag boot-pending (avoids flash) -->
 <script>
 (function () {
