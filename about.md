@@ -40,6 +40,15 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **Play Store** — [com.gwangy.snackplay](https://play.google.com/store/apps/details?id=com.gwangy.snackplay)
 - **소개** — [gwangy.com](https://gwangy.com)
 
+### 🎨 PaletteWeather (팔레트웨더)
+
+> 색으로 읽는 날씨.
+> 시간대별 컬러 팔레트로 오늘의 하늘을 한눈에 볼 수 있습니다.
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.paletteweather)
+
+- **Play Store** — [com.gwangy.paletteweather](https://play.google.com/store/apps/details?id=com.gwangy.paletteweather)
+
 ## Links
 
 - 🌐 **Personal site** — [gwangy.com](https://gwangy.com)
