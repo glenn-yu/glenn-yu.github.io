@@ -725,6 +725,15 @@ body.crt-mode::before {
   color: var(--fg-muted);
   letter-spacing: 0.02em;
 }
+.project-tag-link {
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.project-tag-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 .project-arrow {
   color: var(--fg-muted);
   font-size: 1.1rem;
