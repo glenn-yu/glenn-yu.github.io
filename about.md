@@ -58,6 +58,7 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/id6789185043)
 
 - **App Store** — [힐링 비주얼라이저 - 무드 라이트](https://apps.apple.com/kr/app/id6789185043)
+- **Play Store** — Android 버전 심사중
 
 ## Links
 
