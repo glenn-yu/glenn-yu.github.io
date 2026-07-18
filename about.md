@@ -35,9 +35,10 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 > 데이터 기반 캐주얼 게임 & 리워드 플랫폼.
 > 짧게 즐기는 캐주얼 게임 + 실시간 랭킹 + 리워드.
 
-[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.snackplay)
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.snackplay) [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/id6787878602)
 
 - **Play Store** — [com.gwangy.snackplay](https://play.google.com/store/apps/details?id=com.gwangy.snackplay)
+- **App Store** — [SnackPlay](https://apps.apple.com/kr/app/id6787878602)
 - **소개** — [gwangy.com](https://gwangy.com)
 
 ### 🎨 PaletteWeather (팔레트웨더)
