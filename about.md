@@ -71,6 +71,16 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **App Store** — [LayoutStudio](https://apps.apple.com/kr/app/id6791456061)
 - **Play Store** — Android 버전 심사중
 
+### 🖼️ PhotoFit (포토핏: 사진 리사이저)
+
+> 쉽고 빠른 사진 리사이저.
+> 사진 해상도 변경, 용량 조절 및 비율 맞춤을 간편하게 할 수 있습니다.
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.photofit) [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/photofit-photo-resizer/id6793479273)
+
+- **Play Store** — [com.gwangy.photofit](https://play.google.com/store/apps/details?id=com.gwangy.photofit)
+- **App Store** — [PhotoFit: Photo Resizer](https://apps.apple.com/kr/app/photofit-photo-resizer/id6793479273)
+
 ## Links
 
 - 🌐 **Personal site** — [gwangy.com](https://gwangy.com)
