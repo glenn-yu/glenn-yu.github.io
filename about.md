@@ -56,10 +56,10 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 > 무드 라이트.
 > 잔잔한 비주얼과 색으로 마음을 편안하게 밝혀주는 힐링 앱.
 
-[![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/id6789185043)
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.healingvisualizer) [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/id6789185043)
 
+- **Play Store** — [com.gwangy.healingvisualizer](https://play.google.com/store/apps/details?id=com.gwangy.healingvisualizer)
 - **App Store** — [힐링 비주얼라이저 - 무드 라이트](https://apps.apple.com/kr/app/id6789185043)
-- **Play Store** — Android 버전 심사중
 
 ### 📐 LayoutStudio (레이아웃 스튜디오)
 
