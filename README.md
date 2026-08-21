@@ -4,6 +4,8 @@
 
 Jekyll + GitHub Pages 로 만들어졌습니다.
 
+홈의 Mobile Apps 섹션은 HAMDAE Character/App Family 6개 앱을 실제 192px web export 아이콘으로 표시합니다. 스토어 미출시 앱은 존재하지 않는 링크를 만들지 않고 개발 중 상태만 노출합니다.
+
 ## 글 쓰기
 
 `_posts/` 폴더에 `YYYY-MM-DD-title.md` 형식의 마크다운 파일을 추가하면 됩니다.
@@ -38,6 +40,7 @@ bundle exec jekyll serve
 ├── _layouts/            # default, post 레이아웃
 ├── _posts/              # 블로그 글 (마크다운)
 ├── assets/css/main.css  # 스타일
+├── assets/projects/     # HAMDAE 앱 아이콘 web export
 ├── index.html           # 홈
 └── about.md             # 소개 페이지
 ```

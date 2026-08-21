@@ -30,7 +30,9 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 
 ## Projects
 
-### 🍿 SnackPlay (스낵플레이)
+아래 6개 모바일 앱은 GWANGY의 **HAMDAE Character/App Family**입니다. 같은 오리지널 캐릭터가 앱의 기능에 맞는 역할과 소품으로 확장됩니다.
+
+<h3 class="about-project-title"><img src="/assets/projects/snackplay.png" alt="" width="32" height="32">SnackPlay (스낵플레이)</h3>
 
 > 데이터 기반 캐주얼 게임 & 리워드 플랫폼.
 > 짧게 즐기는 캐주얼 게임 + 실시간 랭킹 + 리워드.
@@ -41,7 +43,7 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **App Store** — [SnackPlay](https://apps.apple.com/kr/app/id6787878602)
 - **소개** — [gwangy.com](https://gwangy.com)
 
-### 🎨 PaletteWeather (팔레트웨더)
+<h3 class="about-project-title"><img src="/assets/projects/paletteweather.png" alt="" width="32" height="32">PaletteWeather (팔레트웨더)</h3>
 
 > 색으로 읽는 날씨.
 > 시간대별 컬러 팔레트로 오늘의 하늘을 한눈에 볼 수 있습니다.
@@ -51,7 +53,7 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **Play Store** — [com.gwangy.paletteweather](https://play.google.com/store/apps/details?id=com.gwangy.paletteweather)
 - **App Store** — [PaletteWeather - Weather Color](https://apps.apple.com/kr/app/id6786560640)
 
-### 💡 Healing Visualizer (힐링 비주얼라이저)
+<h3 class="about-project-title"><img src="/assets/projects/healingvisualizer.png" alt="" width="32" height="32">Healing Visualizer (힐링 비주얼라이저)</h3>
 
 > 무드 라이트.
 > 잔잔한 비주얼과 색으로 마음을 편안하게 밝혀주는 힐링 앱.
@@ -61,7 +63,7 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **Play Store** — [com.gwangy.healingvisualizer](https://play.google.com/store/apps/details?id=com.gwangy.healingvisualizer)
 - **App Store** — [힐링 비주얼라이저 - 무드 라이트](https://apps.apple.com/kr/app/id6789185043)
 
-### 📐 LayoutStudio (레이아웃 스튜디오)
+<h3 class="about-project-title"><img src="/assets/projects/nativelayoutstudio.png" alt="" width="32" height="32">NativeLayoutStudio (레이아웃 스튜디오)</h3>
 
 > 네이티브 광고 목업 생성기.
 > 캔버스 위에서 에셋을 배치하고 실제 배경에 미리보기 할 수 있습니다.
@@ -71,7 +73,7 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 - **Play Store** — [com.gwangy.nativelayoutstudio](https://play.google.com/store/apps/details?id=com.gwangy.nativelayoutstudio)
 - **App Store** — [LayoutStudio](https://apps.apple.com/kr/app/id6791456061)
 
-### 🖼️ PhotoFit (포토핏: 사진 리사이저)
+<h3 class="about-project-title"><img src="/assets/projects/photofit.png" alt="" width="32" height="32">PhotoFit (포토핏: 사진 리사이저)</h3>
 
 > 쉽고 빠른 사진 리사이저.
 > 사진 해상도 변경, 용량 조절 및 비율 맞춤을 간편하게 할 수 있습니다.
@@ -80,6 +82,13 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 
 - **Play Store** — [com.gwangy.photofit](https://play.google.com/store/apps/details?id=com.gwangy.photofit)
 - **App Store** — [PhotoFit: Photo Resizer](https://apps.apple.com/kr/app/photofit-photo-resizer/id6793479273)
+
+<h3 id="snapcaption" class="about-project-title"><img src="/assets/projects/snapcaption.png" alt="" width="32" height="32">SnapCaption (스냅캡션)</h3>
+
+> 사진 한 장과 키워드로 소셜 캡션 5개와 해시태그를 만드는 오프라인 캡션 크리에이터.
+
+- **Platforms** — Android / iOS
+- **Status** — In development
 
 ## Links
 
