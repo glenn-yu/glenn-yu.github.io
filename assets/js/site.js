@@ -126,7 +126,7 @@
         { kind: 'cmd', title: 'NativeLayoutStudio (Google Play)', sub: 'HAMDAE · play.google.com', action: function () { window.open('https://play.google.com/store/apps/details?id=com.gwangy.nativelayoutstudio', '_blank', 'noopener'); } },
         { kind: 'cmd', title: 'PhotoFit (Google Play)', sub: 'HAMDAE · play.google.com', action: function () { window.open('https://play.google.com/store/apps/details?id=com.gwangy.photofit', '_blank', 'noopener'); } },
         { kind: 'cmd', title: 'PhotoFit (App Store)', sub: 'HAMDAE · apps.apple.com', action: function () { window.open('https://apps.apple.com/kr/app/photofit-photo-resizer/id6793479273', '_blank', 'noopener'); } },
-        { kind: 'page', title: 'SnapCaption', sub: 'HAMDAE · In development', href: '/about/#snapcaption' },
+        { kind: 'cmd', title: 'SnapCaption (App Store)', sub: 'HAMDAE · apps.apple.com', action: function () { window.open('https://apps.apple.com/kr/app/snapcaption-photo-captions/id6804244646?l=en-GB', '_blank', 'noopener'); } },
         { kind: 'cmd', title: '🌐 gwangy.com 으로 이동', sub: 'gwangy.com', action: function () { window.open('https://gwangy.com', '_blank', 'noopener'); } },
         { kind: 'cmd', title: '📒 네이버 블로그', sub: 'blog.naver.com/kcskiller', action: function () { window.open('https://blog.naver.com/kcskiller', '_blank', 'noopener'); } },
         { kind: 'cmd', title: '↗ GitHub 으로 이동', sub: 'github.com/glenn-yu', action: function () { window.open('https://github.com/glenn-yu', '_blank', 'noopener'); } },

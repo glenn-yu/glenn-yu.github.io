@@ -87,8 +87,9 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 
 > 사진 한 장과 키워드로 소셜 캡션 5개와 해시태그를 만드는 오프라인 캡션 크리에이터.
 
-- **Platforms** — Android / iOS
-- **Status** — In development
+[![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/snapcaption-photo-captions/id6804244646?l=en-GB)
+
+- **App Store** — [SnapCaption - Photo Captions](https://apps.apple.com/kr/app/snapcaption-photo-captions/id6804244646?l=en-GB)
 
 ## Links
 
