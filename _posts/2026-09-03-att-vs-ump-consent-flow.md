@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "[iOS] ATT와 UMP는 같은 동의가 아니다: App Store 심사 거절로 배운 동의 흐름 설계"
+title: "[iOS] ATT와 UMP는 같은 동의가 아니다 — App Store 심사 거절로 배운 동의 흐름 설계"
 date: 2026-09-03 21:30:00 +0900
 categories: [iOS, Privacy, AppStore]
 tags: [iOS, ATT, AppTrackingTransparency, UMP, AdMob, Privacy, AppReview, Swift, Mobile]
