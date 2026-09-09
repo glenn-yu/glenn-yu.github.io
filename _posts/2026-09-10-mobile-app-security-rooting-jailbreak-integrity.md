@@ -3,7 +3,7 @@ layout: post
 title: "[Mobile] 모바일 앱 보안 실무 가이드 — 루팅/탈옥 차단, 디버거 방어, 화면 캡처 방지, 서명 위변조 검증의 진화와 히스토리"
 date: 2026-09-10 10:00:00 +0900
 categories: [Mobile, Security]
-tags: [Android, iOS, Security, Rooting, Jailbreak, AntiDebugging, FlagSecure, PlayIntegrity, AppAttest, CodeSigning, Kotlin, Swift]
+tags: [Android, iOS, Security, Rooting, Jailbreak, AntiDebugging, FlagSecure, PlayIntegrity, AppAttest, CodeSigning, Kotlin, Swift, JetpackCompose, SwiftUI]
 excerpt: "Android와 iOS 환경에서 루팅/탈옥 탐지, 디버거 차단, 화면 캡처 방지, 서명 지문 무결성 검증의 세대별 진화 히스토리와 최신 OS(Android 15, iOS 18) 실무 방어 코드를 팩트체크 기반으로 총정리한다."
 ---
 
@@ -18,7 +18,7 @@ excerpt: "Android와 iOS 환경에서 루팅/탈옥 탐지, 디버거 차단, �
 
 하지만 클라이언트 사이드 보안의 역사는 공격자와 방어자 사이의 끝없는 **"창과 방패의 군비경쟁(Cat-and-Mouse Game)"**이었습니다. 클라이언트 보안의 본질은 "절대 뚫리지 않는 완벽한 방패"가 아니라, **"공격자의 분석 및 우회 비용을 비즈니스 가치 이상으로 극대화(Cost Escalation)하는 심층 방어(Defense-in-Depth)"**에 있습니다.
 
-각 보안 영역이 **어떤 역사적 기술 변천(히스토리)**을 거쳐 오늘날의 표준에 도달했는지 팩트체크하고, 최신 OS 환경(Android 14/15, iOS 17/18)에서 동작하는 실무 구현 코드를 정리합니다.
+각 보안 영역이 **어떤 역사적 기술 변천(히스토리)**을 거쳐 오늘날의 표준에 도달했는지 팩트체크하고, 최신 OS 환경(Android 14/15, iOS 17/18) 및 최신 UI 프레임워크(Jetpack Compose, SwiftUI)에서 바로 복사해 쓸 수 있는 실무 구현 코드를 정리합니다.
 
 ---
 
@@ -44,7 +44,7 @@ excerpt: "Android와 iOS 환경에서 루팅/탈옥 탐지, 디버거 차단, �
 - **3세대 (2021~2024년: Zygisk와 Play Integrity)**: Magisk가 Zygote 프로세스 자체에 인젝션하는 Zygisk로 진화했습니다. Google은 SafetyNet을 **2024년 1월 31일부로 완전히 종료(Shutdown)**하고 **Play Integrity API**로 전면 전환했습니다.
 - **4세대 (2023년~현재: KernelSU, APatch)**: 안드로이드 커널(GKI, Generic Kernel Image) 레벨에서 특정 프로세스에만 루트 권한을 부여합니다. 유저스페이스 파일시스템이나 Zygote에는 아무런 흔적도 남지 않으므로, **로컬 Java/Kotlin 코드로는 사실상 탐지가 불가능**합니다.
 
-### 1-1. 로컬 휴리스틱 루팅 감지 로직 (기초 방어선)
+### 1-1. 로컬 휴리스틱 루팅 감지 샘플 코드 (Kotlin)
 
 ```kotlin
 import android.os.Build
@@ -106,7 +106,7 @@ object AndroidRootDetector {
 > **오픈소스 라이브러리 활용**  
 > 실무에서는 [RootBeer](https://github.com/scottyab/rootbeer) 라이브러리를 주로 병행합니다. NDK C 계층 검사, Busybox 바이너리 확인, 위험 패키지 조회를 수행하지만, 여전히 4세대 KernelSU 환경에서는 우회됩니다.
 
-### 1-2. 현대의 정석: Google Play Integrity API 원격 증명
+### 1-2. 현대의 정석: Google Play Integrity API 원격 증명 샘플 코드
 
 4세대 루팅을 막으려면 클라이언트 판정이 아닌 **구글 서버가 발행하는 TEE/하드웨어 증명 토큰**을 검증해야 합니다.
 
@@ -180,7 +180,7 @@ fun requestIntegrityToken(
 - **2세대 (iOS 9~14: 반탈옥 및 checkm8)**: 재부팅할 때마다 앱을 통해 탈옥을 활성화하는 반탈옥(Semi-Untethered)과 A5~A11 칩셋의 하드웨어 취약점(checkm8) 기반 탈옥 유행.
 - **3세대 (iOS 15~현재: Rootless 탈옥)**: 애플이 iOS 15부터 시스템 볼륨에 암호학적 서명 트리인 **SSV(Signed System Volume)**를 도입하여 루트 파티션이 1바이트라도 변경되면 기기가 부팅되지 않도록 봉쇄했습니다. 이에 따라 최신 탈옥(Dopamine, Fugu15, palera1n)은 시스템 볼륨을 건드리지 않고 유저 파티션인 **/var/jb/** 아래에만 탈옥 바이너리를 설치하는 **Rootless(루트리스)** 구조로 완전히 전환되었습니다.
 
-### 2-1. iOS 탈옥 탐지: Rootless 탈옥 대응 코드
+### 2-1. iOS 탈옥 탐지: Rootless 탈옥 대응 샘플 코드 (Swift)
 
 ```swift
 import Foundation
@@ -260,12 +260,27 @@ enum JailbreakDetector {
 }
 ```
 
-### 2-2. iOS 디버거 부착 차단 (Anti-Debugging)
+### 2-2. iOS 디버거 부착 차단 샘플 코드 (Anti-Debugging)
 
 공격자가 LLDB나 Frida를 프로세스에 부착(`attach`)하여 메모리나 분기문을 조작하는 것을 방어합니다.
 
 #### 1) `ptrace(PT_DENY_ATTACH)`와 App Store 심사 주의사항
 BSD 시스템 콜인 `ptrace(PT_DENY_ATTACH, 0, nil, 0)`는 디버거 부착 시 프로세스를 강제 종료시킵니다. 하지만 애플 심사(App Review)에서 정적 `ptrace` 호출은 비공개 API(Private API)로 오인되어 가이드라인 2.5.2 리젝 사유가 될 수 있습니다. 실무에서는 `dlsym`을 통한 동적 바인딩을 사용하거나, 더 안전한 `sysctl` 방식을 권장합니다.
+
+```swift
+import Darwin
+
+let PT_DENY_ATTACH: Int32 = 31
+typealias PtraceType = @convention(c) (Int32, pid_t, caddr_t?, Int32) -> Int32
+
+func disableDebuggerAttach() {
+    let handle = dlopen(nil, RTLD_GLOBAL | RTLD_NOW)
+    if let sym = dlsym(handle, "ptrace") {
+        let ptraceFunc = unsafeBitCast(sym, to: PtraceType.self)
+        _ = ptraceFunc(PT_DENY_ATTACH, 0, nil, 0)
+    }
+}
+```
 
 #### 2) `sysctl` 기반 `P_TRACED` 플래그 감지 (실무 권장)
 
@@ -306,8 +321,9 @@ iOS 14+에서는 Google Play Integrity에 대응하는 **DCAppAttestService**를
 | **iOS** | iOS 11.0 | `UIScreen.capturedDidChangeNotification` | 화면 녹화(Screen Recording) 및 AirPlay 미러링 실시간 감지 |
 | **iOS** | 실무 테크닉 | `UITextField.isSecureTextEntry` 레이어 | 하드웨어 렌더링 시 비밀번호 필드가 블랭크 처리되는 특성을 이용한 컨테이너 뷰 트릭 |
 
-### 3-1. [Android] `FLAG_SECURE` vs Android 14 `ScreenCaptureCallback`
+### 3-1. [Android] `FLAG_SECURE` 및 Jetpack Compose / Android 14 샘플 코드
 
+#### 1) XML Activity 기반 `FLAG_SECURE`
 ```kotlin
 import android.os.Bundle
 import android.view.WindowManager
@@ -317,7 +333,7 @@ class SecureActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 1. 하드웨어 레벨 원천 차단 (FLAG_SECURE)
+        // 하드웨어 레벨 원천 차단 (FLAG_SECURE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
             WindowManager.LayoutParams.FLAG_SECURE
@@ -328,13 +344,66 @@ class SecureActivity : AppCompatActivity() {
 }
 ```
 
-> **Android 14 신규 기능과의 차이점**  
-> `FLAG_SECURE`는 화면을 **원천 차단(Blackout)**하는 것이며, Android 14의 `registerScreenCaptureCallback`(`DETECT_SCREEN_CAPTURE` 권한)은 사용자가 캡처했을 때 **이벤트를 감지**하여 안내 토스트를 띄우거나 감사 로그를 남기는 용도입니다. `FLAG_SECURE`가 켜져 있으면 스크린샷 자체가 차단되므로 감지 콜백은 트리거되지 않습니다.
+#### 2) Jetpack Compose: 화면 진입 시 동적으로 보호하는 `SecureScreen` Composable
+```kotlin
+import android.app.Activity
+import android.view.WindowManager
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
 
-### 3-2. [iOS] `UITextField` 보안 캔버스 계층화 트릭
+@Composable
+fun SecureScreen(content: @Composable () -> Unit) {
+    val context = LocalContext.current
+    
+    DisposableEffect(Unit) {
+        val window = (context as? Activity)?.window
+        window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        
+        onDispose {
+            // 해당 화면을 빠져나갈 때 플래그 해제
+            window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
+    }
+    
+    content()
+}
+```
 
-iOS는 안드로이드의 `FLAG_SECURE`와 같은 공식 차단 API를 제공하지 않으므로, 비밀번호 입력 필드의 하드웨어 보안 렌더링 특성(`_UITextLayoutCanvasView`)을 활용합니다.
+#### 3) Android 14(API 34) 신규: `ScreenCaptureCallback` (캡처 감지 액티비티)
+```kotlin
+import android.app.Activity
+import android.os.Build
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
+class ScreenshotDetectionActivity : AppCompatActivity() {
+
+    private val screenCaptureCallback = Activity.ScreenCaptureCallback {
+        // 사용자가 볼륨하단+전원키로 스크린샷을 찍었을 때 호출됨
+        Toast.makeText(this, "화면 캡처가 감지되었습니다. 보안 로그가 기록됩니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            registerScreenCaptureCallback(mainExecutor, screenCaptureCallback)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            unregisterScreenCaptureCallback(screenCaptureCallback)
+        }
+    }
+}
+```
+
+### 3-2. [iOS] `UITextField` 캔버스 트릭 & SwiftUI 연동 샘플 코드
+
+#### 1) UIKit 컨테이너 뷰 (`SecureContainerView.swift`)
 ```swift
 import UIKit
 
@@ -385,6 +454,54 @@ final class SecureContainerView: UIView {
 }
 ```
 
+#### 2) SwiftUI 연동을 위한 `SecureView` 래퍼
+```swift
+import SwiftUI
+
+/// SwiftUI 뷰를 감싸서 캡처 방지 처리하는 ViewModifier / View
+struct SecureView<Content: View>: UIViewRepresentable {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    func makeUIView(context: Context) -> SecureContainerView {
+        let secureView = SecureContainerView()
+        let hostingController = UIHostingController(rootView: content)
+        hostingController.view.backgroundColor = .clear
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        secureView.addSecuredSubview(hostingController.view)
+        
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: secureView.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: secureView.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: secureView.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: secureView.trailingAnchor)
+        ])
+        
+        return secureView
+    }
+
+    func updateUIView(_ uiView: SecureContainerView, context: Context) {}
+}
+
+// SwiftUI 사용 예시
+struct SensitiveDataView: View {
+    var body: some View {
+        SecureView {
+            VStack {
+                Text("계좌번호: 110-123-456789")
+                Text("보안카드 비밀번호: ****")
+            }
+            .padding()
+            .background(Color.white)
+        }
+    }
+}
+```
+
 ---
 
 ## 4. 앱 서명 지문 & 위변조 무결성 검증의 진화 히스토리
@@ -396,7 +513,7 @@ final class SecureContainerView: UIView {
 3. **v3 서명 (Android 9.0 Pie+)**: **키 순환(Key Rotation)** 지원. 과거 서명 키가 유출되었더라도 새로운 키로 서명하고 히스토리를 증명할 수 있는 `SigningInfo` API 도입.
 4. **v4 서명 (Android 11+)**: 대용량 앱의 스트리밍 설치를 지원하기 위한 fs-verity 해시 트리 기반 서명.
 
-### 4-1. [Android] SigningInfo 기반 SHA-256 서명 지문 검증
+### 4-1. [Android] SigningInfo 기반 SHA-256 서명 지문 검증 샘플 코드 (Kotlin)
 
 ```kotlin
 import android.content.Context
@@ -455,7 +572,7 @@ object AppSignatureVerifier {
 > Google Play App Signing 도입 이후, 개발자가 Play Console에 업로드할 때 사용하는 **"업로드 키(Upload Key)"**와 구글 서버가 최종 사용자에게 배포할 때 새로 서명하는 **"앱 서명 키(App Signing Key)"**의 지문이 다릅니다.  
 > 코드에 하드코딩할 값은 개발자의 로컬 keystore 지문이 아니라, **Google Play Console > 설정 > 앱 무결성(App Integrity) > 앱 서명** 탭의 **"앱 서명 키 인증서 SHA-256 지문"**이어야 합니다. 그렇지 않으면 스토어 배포 직후 모든 앱이 무결성 검증 실패로 튕기는 대형 장애가 발생합니다.
 
-### 4-2. [iOS] 번들 ID 및 프로비저닝 프로파일 검증 (재서명 차단)
+### 4-2. [iOS] 번들 ID 및 프로비저닝 프로파일 검증 샘플 코드 (Swift)
 
 공격자가 유출된 기업용(In-House) 인증서나 무료 개발자 계정으로 앱을 재서명(Resigning)하여 AltStore, TrollStore 등으로 유포하는 행위를 탐지합니다.
 
