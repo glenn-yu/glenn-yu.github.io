@@ -4,7 +4,7 @@
 
 Jekyll + GitHub Pages 로 만들어졌습니다.
 
-홈의 Mobile Apps 섹션은 HAMDAE Character/App Family 6개 앱을 실제 192px web export 아이콘으로 표시합니다. 스토어 미출시 앱은 존재하지 않는 링크를 만들지 않고 개발 중 상태만 노출합니다.
+홈의 Mobile Apps 섹션은 HAMDAE Character/App Family 8개 앱을 실제 192px web export 아이콘으로 표시합니다. 스토어 미출시 앱은 존재하지 않는 링크를 만들지 않고 개발 중 상태만 노출합니다.
 
 ## 글 쓰기
 

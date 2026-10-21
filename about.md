@@ -30,7 +30,7 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 
 ## Projects
 
-아래 6개 모바일 앱은 GWANGY의 **HAMDAE Character/App Family**입니다. 같은 오리지널 캐릭터가 앱의 기능에 맞는 역할과 소품으로 확장됩니다.
+아래 8개 모바일 앱은 GWANGY의 **HAMDAE Character/App Family**입니다. 같은 오리지널 캐릭터가 앱의 기능에 맞는 역할과 소품으로 확장됩니다.
 
 <h3 class="about-project-title"><img src="/assets/projects/snackplay.png" alt="" width="32" height="32">SnackPlay (스낵플레이)</h3>
 
@@ -87,9 +87,30 @@ Android 가 본진이지만, 필요하면 React Native 브릿지도 짜고
 
 > 사진 한 장과 키워드로 소셜 캡션 5개와 해시태그를 만드는 오프라인 캡션 크리에이터.
 
-[![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/snapcaption-photo-captions/id6804244646?l=en-GB)
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.snapcaption) [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/snapcaption-photo-captions/id6804244646?l=en-GB)
 
+- **Play Store** — [com.gwangy.snapcaption](https://play.google.com/store/apps/details?id=com.gwangy.snapcaption)
 - **App Store** — [SnapCaption - Photo Captions](https://apps.apple.com/kr/app/snapcaption-photo-captions/id6804244646?l=en-GB)
+
+<h3 class="about-project-title"><img src="/assets/projects/videofit.png" alt="" width="32" height="32">VideoFit (비디오핏: 동영상 용량 줄이기)</h3>
+
+> 쉽고 빠른 동영상 리사이저 &amp; 편집기.
+> 영상 용량 줄이기, 화면 비율 맞춤, 해상도 및 구간 편집을 온디바이스로 안전하게 처리합니다.
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.videofit) [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/id6820540358)
+
+- **Play Store** — [com.gwangy.videofit](https://play.google.com/store/apps/details?id=com.gwangy.videofit)
+- **App Store** — [VideoFit](https://apps.apple.com/kr/app/id6820540358)
+
+<h3 class="about-project-title"><img src="/assets/projects/damul.png" alt="" width="32" height="32">Damul (다물: K삼국지)</h3>
+
+> 동아시아 삼국시대 정통 전략 시뮬레이션.
+> 고구려·백제·신라·가야의 영토 확장, 역사적 사건 분기, 내정·군사·외교의 지략을 겨룹니다.
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png){: width="180"}](https://play.google.com/store/apps/details?id=com.gwangy.damul) [![Download on the App Store](https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg){: width="160"}](https://apps.apple.com/kr/app/id6819287181)
+
+- **Play Store** — [com.gwangy.damul](https://play.google.com/store/apps/details?id=com.gwangy.damul)
+- **App Store** — [다물(多勿) - K삼국지](https://apps.apple.com/kr/app/id6819287181)
 
 ## Links
 
