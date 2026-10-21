@@ -27,27 +27,29 @@ Android의 네이티브 광고 구현 코드를 확인해 보니 다음과 같�
 
 ```kotlin
 // 문제가 된 구버전 코드 (높이 ~200dp 비대화)
-val container = LinearLayout(context).apply {
-    orientation = LinearLayout.VERTICAL
-    setPadding(16.dp, 16.dp, 16.dp, 16.dp)
+internal fun createNativeAdView(context: Context): NativeAdView {
+    val adView = NativeAdView(context)
+    val column = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(context.dp(12), context.dp(12), context.dp(12), context.dp(12))
+    }
+    
+    // 위에서 아래로 무조건 쌓아 올림
+    column.addView(TextView(context).apply { id = R.id.native_ad_label })
+    column.addView(TextView(context).apply { id = R.id.native_ad_headline })
+    column.addView(TextView(context).apply { id = R.id.native_ad_body })
+    column.addView(Button(context).apply { id = R.id.native_ad_cta })
+    
+    adView.addView(column, LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+    return adView
 }
-
-val adBadge = TextView(context).apply { text = "AD" }
-val headline = TextView(context).apply { textSize = 16f }
-val body = TextView(context).apply { textSize = 14f }
-val cta = Button(context).apply { text = "설치하기" }
-
-// 위에서 아래로 무조건 쌓아 올림
-container.addView(adBadge)
-container.addView(headline)
-container.addView(body)
-container.addView(cta)
 ```
 
-- 아이콘 뷰가 누락되어 있었고,
+Compose 상위에서는 이를 감싸면서 `modifier.fillMaxWidth().wrapContentHeight()`를 주었습니다.
+- 광고주 아이콘 뷰는 아예 없었고,
 - `[AD] 뱃지` → `헤드라인` → `설명문(Body)` → `CTA 버튼`을 4줄로 수직 적층했습니다.
-- 광고 텍스트가 2줄 이상으로 줄바꿈되거나 광고주 이미지가 들어올 경우 높이가 **200dp 이상**으로 부풀어 올랐습니다.
-- 게다가 화면 좌우 마진도 없어 화면 양 끝에 딱 달라붙어 있었습니다.
+- 광고 텍스트가 2줄 이상으로 줄바꿈되면 높이가 **180~200dp 이상**으로 부풀어 올랐습니다.
+- 게다가 좌우 16dp 인셋도 없어 화면 베젤 끝까지 닿아 답답한 인상을 주었습니다.
 
 ### iOS: `.cardStyle()`과 고정 프레임의 충돌
 
@@ -55,13 +57,14 @@ iOS(SwiftUI)는 반대로 고정 프레임을 주었음에도 Modifier가 중첩
 
 ```swift
 // 문제가 된 구버전 코드 (높이 136pt로 부풀려짐)
-NativeAdSlot()
+NativeAdContainer(nativeAd: ad)
     .frame(height: 72)
     .cardStyle() // 내부적으로 사방 16pt 패딩 + 배경 + 모서리 반경 적용
-    .padding(.vertical, 16) // 외부에서 또 16pt 패딩 추가!
+    .padding(.top, 16)
+    .padding(.bottom, aboveNavigation ? 16 : 0)
 ```
 
-SwiftUI에서 `frame(height: 72)`를 지정하더라도, 뒤이어 붙은 공용 카드 스타일(`cardStyle()`)의 상하 패딩과 외부 컨테이너의 상하 패딩이 더해지면서 실제 점유 높이는 **136pt**를 넘어섰습니다. 여기에 내부 UIKit 브릿지 뷰의 제약 조건(Constraints) 경고까지 쏟아지고 있었습니다.
+`Theme.swift`에 정의된 공용 `.cardStyle()` 내부를 보면 `content.padding(16)`이 포함되어 있었습니다. 프레임 72pt에 상하 패딩 32pt가 더해지고, 외부 컨테이너의 상하 패딩 16~32pt가 한 번 더 붙으면서 실제 렌더링 점유 높이는 **136pt**를 넘어섰습니다.
 
 ---
 
@@ -82,153 +85,163 @@ SwiftUI에서 `frame(height: 72)`를 지정하더라도, 뒤이어 붙은 공용
 │← 16dp →│                 카드 높이: 64dp                │← 16dp →│
 ```
 
-### 필수 레이아웃 원칙 5가지
+### 치수 상세 설계 (`CompactAdMetrics`)
 
-1. **가로 1열 단일 스트립**: `[아이콘 40dp]` + `[[AD] + 텍스트 영역]` + `[CTA 48dp]` + `[AdChoices 20dp]`가 가로로 한 줄에 배치됩니다.
-2. **높이 상한 64dp / 72dp**: 기본 글꼴 크기에서는 정확히 `64dp`, OS 접근성 '큰 글씨' 모드에서는 `72dp`로 유연하게 늘어납니다.
-3. **텍스트 말줄임 강제**: 헤드라인과 보조 정보는 반드시 1줄(`maxLines = 1`, `ellipsize = TextUtils.TruncateAt.END`)로 제한하여 세로 팽창을 원천 차단합니다.
-4. **양옆 16dp 인셋**: 콘텐츠 영역과 일치하도록 화면 좌우에 `16dp` 여백을 둡니다.
-5. **광고 없을 때 0dp 접힘 (Collapse)**: 광고 로드 전이나 로드 실패(`onAdFailedToLoad`) 시에는 높이 **0dp 및 여백 0**으로 완전히 사라져야 합니다.
+- **슬롯 높이**: 기본 `64dp/pt`, 시스템 접근성 큰 글씨 설정 시 `72dp/pt`.
+- **내부 카드**: 4dp inset 적용 → `56dp/pt` 카드 본체 (상하 2dp 패딩 → `52dp` 콘텐츠 영역).
+- **광고주 아이콘**: `40×40dp/pt`, 모서리 `8dp/pt` 라운딩.
+- **헤드라인 & 보조 정보**: 가로 1열 가변 너비, 반드시 1줄 말줄임(`maxLines = 1`, `ellipsize = END` / `lineLimit(1)`).
+- **CTA 버튼**: 높이 `48dp` (iOS HIG 기준 `44pt`), 최소 너비 `56dp/pt`, 앰버(Amber) 강조색으로 앱 UI와 시각적 분리.
+- **AdChoices 마커**: `20×20dp/pt` (우상단 4dp 인셋 보장).
+- **무광고 접힘 (Zero-Height Collapse)**: 로드 전이거나 실패 시 높이 **0dp/pt 및 마진 0**으로 완전 소멸.
 
 ---
 
-## 3. Android 구현: Jetpack Compose + View Binding
+## 3. Android 구현: Jetpack Compose + 프로그래매틱 View
 
-AdMob의 네이티브 광고 SDK(`com.google.android.gms.ads.nativead.NativeAdView`)는 내부적으로 특정 View가 `headlineView`, `iconView`, `callToActionView`로 등록되어야 클릭 감지와 정책 검증을 통과합니다. 따라서 Compose 환경에서는 `AndroidView`를 통해 경량 XML 레이아웃을 띄우는 것이 가장 안전합니다.
+Android에서는 XML 인플레이션 오버헤드를 없애고 Compose의 테마 토큰(`MaterialTheme.colorScheme`)과 폰트 스케일을 즉시 바인딩할 수 있도록 Kotlin 코드로 프로그래매틱하게 뷰 트리를 구성했습니다.
 
-### 1) 경량 가로 스트립 XML (`view_compact_native_ad.xml`)
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.gms.ads.nativead.NativeAdView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/native_ad_view"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:background="@drawable/bg_compact_ad_card">
-
-        <!-- 40dp 광고주 아이콘 -->
-        <ImageView
-            android:id="@+id/ad_app_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/bg_ad_icon_rounded" />
-
-        <!-- 헤드라인 + 보조정보 -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="8dp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/ad_attribution"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AD"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:textColor="#E08A00"
-                    android:background="@drawable/bg_ad_badge"
-                    android:paddingHorizontal="4dp"
-                    android:paddingVertical="1dp" />
-
-                <TextView
-                    android:id="@+id/ad_headline"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/ad_body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textSize="11sp"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-        </LinearLayout>
-
-        <!-- CTA 버튼 (48dp 높이) -->
-        <Button
-            android:id="@+id/ad_call_to_action"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:minWidth="64dp"
-            android:paddingHorizontal="12dp"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:background="@drawable/bg_ad_cta_button" />
-    </LinearLayout>
-</com.google.android.gms.ads.nativead.NativeAdView>
-```
-
-### 2) Compose 슬롯 컴포저블: 0dp 접힘 보장
+### 1) Compose 컨테이너: 0dp 접힘 및 큰 글씨 감지
 
 ```kotlin
 @Composable
-fun CompactNativeAdSlot(
-    nativeAd: NativeAd?,
-    modifier: Modifier = Modifier
+fun NativeAdSlot(
+    placement: AdPlacement,
+    modifier: Modifier = Modifier,
 ) {
-    // 광고가 없으면 높이와 마진을 완전히 0으로 수축
-    if (nativeAd == null) {
-        Spacer(modifier = Modifier.height(0.dp))
-        return
+    val context = LocalContext.current
+    val manager = remember(context) { NativeAdManager.getInstance(context) }
+    val nativeAd by manager.ad(placement).collectAsState()
+
+    DisposableEffect(placement) {
+        manager.preload(placement)
+        onDispose { }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
+    // 광고가 없으면 아무것도 그리지 않고 높이 0으로 접힘
+    val ad = nativeAd ?: return
+
+    val fontScale = LocalDensity.current.fontScale
+    val slotHeight = if (fontScale >= 1.3f) 72.dp else 64.dp
+    val scheme = MaterialTheme.colorScheme
+    val darkTheme = scheme.background.luminance() < 0.5f
+
+    val palette = NativeAdPalette(
+        card = scheme.surfaceVariant.toArgb(),
+        cardStroke = if (darkTheme) 0xFF94A3B8.toInt() else 0xFF64748B.toInt(),
+        primaryText = scheme.onSurface.toArgb(),
+        secondaryText = scheme.onSurfaceVariant.toArgb(),
+        cta = if (darkTheme) 0xFFF5B94A.toInt() else 0xFF8F5000.toInt() // 앰버 강조
+    )
+
+    key(ad) {
         AndroidView(
-            factory = { context ->
-                val binding = ViewCompactNativeAdBinding.inflate(LayoutInflater.from(context))
-                val adView = binding.root
-
-                adView.headlineView = binding.adHeadline
-                adView.bodyView = binding.adBody
-                adView.callToActionView = binding.adCallToAction
-                adView.iconView = binding.adAppIcon
-
-                bindNativeAd(adView, binding, nativeAd)
-                adView
-            },
-            update = { adView ->
-                val binding = ViewCompactNativeAdBinding.bind(adView)
-                bindNativeAd(adView, binding, nativeAd)
-            },
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .heightIn(min = 64.dp, max = 72.dp)
+                .height(slotHeight)
+                .padding(horizontal = 16.dp),
+            factory = { ctx -> createNativeAdView(ctx) },
+            update = { view -> bindNativeAd(view, ad, palette) },
+            onRelease = { runCatching { it.destroy() } }
         )
     }
+}
+```
+
+### 2) 가로 1열 프로그래매틱 뷰 트리
+
+```kotlin
+internal fun createNativeAdView(context: Context): NativeAdView {
+    val adView = NativeAdView(context).apply {
+        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+    }
+
+    // 1. 가로 카드 레이아웃
+    val card = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+        val vPad = context.dp(2)
+        setPadding(context.dp(6), vPad, context.dp(22), vPad) // AdChoices 자리 22dp 확보
+        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
+            val inset = context.dp(4)
+            setMargins(inset, inset, inset, inset)
+        }
+    }
+
+    // 2. 40dp 아이콘 (8dp 둥근 모서리 클리핑)
+    val iconView = ImageView(context).apply {
+        id = R.id.native_ad_icon
+        layoutParams = LinearLayout.LayoutParams(context.dp(40), context.dp(40)).apply {
+            marginEnd = context.dp(8)
+        }
+        scaleType = ImageView.ScaleType.CENTER_CROP
+        clipToOutline = true
+        outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, context.dp(8).toFloat())
+            }
+        }
+    }
+    card.addView(iconView)
+
+    // 3. 헤드라인 + 보조정보 텍스트 컬럼 (1줄 말줄임 강제)
+    val textColumn = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        gravity = Gravity.CENTER_VERTICAL
+        layoutParams = LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f)
+    }
+    // [AD] 라벨과 헤드라인을 담는 Title Row
+    val titleRow = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+    }
+    titleRow.addView(TextView(context).apply {
+        id = R.id.native_ad_label
+        text = "AD"
+        textSize = 11f
+        typeface = Typeface.DEFAULT_BOLD
+    })
+    titleRow.addView(TextView(context).apply {
+        id = R.id.native_ad_headline
+        textSize = 13f
+        typeface = Typeface.DEFAULT_BOLD
+        maxLines = 1
+        ellipsize = TextUtils.TruncateAt.END
+    })
+    textColumn.addView(titleRow)
+
+    val secondary = TextView(context).apply {
+        id = R.id.native_ad_body
+        textSize = 11f
+        maxLines = 1
+        ellipsize = TextUtils.TruncateAt.END
+    }
+    textColumn.addView(secondary)
+    card.addView(textColumn)
+
+    // 4. CTA 버튼 (48dp 터치 높이 확보)
+    val cta = Button(context, null, android.R.attr.borderlessButtonStyle).apply {
+        id = R.id.native_ad_cta
+        textSize = 12f
+        isAllCaps = false
+        maxLines = 1
+        minWidth = context.dp(56)
+        layoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, context.dp(48))
+    }
+    card.addView(cta)
+    adView.addView(card)
+
+    // 5. AdChoices 마커 (우상단 4dp 인셋)
+    adView.addView(
+        AdChoicesView(context),
+        FrameLayout.LayoutParams(context.dp(20), context.dp(20), Gravity.TOP or Gravity.END).apply {
+            val inset = context.dp(4)
+            setMargins(0, inset, inset, 0)
+        }
+    )
+
+    return adView
 }
 ```
 
@@ -236,65 +249,73 @@ fun CompactNativeAdSlot(
 
 ## 4. iOS 구현: SwiftUI + UIViewRepresentable
 
-iOS에서도 SwiftUI 뷰 계층 안에서 높이 팽창이 일어나지 않도록 `UIViewRepresentable` 내부에서 명시적 오토레이아웃 제약조건을 걸어줍니다.
+iOS에서도 SwiftUI 뷰 계층 안에서 높이 팽창이 일어나지 않도록 `UIViewRepresentable` 내부에서 `UIStackView`와 오토레이아웃 제약조건을 걸어줍니다.
+
+### 1) 치수 및 다크모드 팔레트 정의
 
 ```swift
-struct CompactNativeAdView: UIViewRepresentable {
-    let nativeAd: GADNativeAd?
+enum CompactAdMetrics {
+    static let height: CGFloat = 64
+    static let maxHeight: CGFloat = 72
+    static let iconSize: CGFloat = 40
+    static let iconCornerRadius: CGFloat = 8
+    static let ctaHeight: CGFloat = 44
+    static let cardCornerRadius: CGFloat = 12
+    static let adChoicesSize: CGFloat = 20
+}
 
-    func makeUIView(context: Context) -> GADNativeAdView {
-        let adView = GADNativeAdView()
-        adView.translatesAutoresizingMaskIntoConstraints = false
-        setupCompactLayout(adView)
-        return adView
-    }
+enum CompactAdPalette {
+    static let cta = dynamic(light: 0x8F_50_00, dark: 0xF5_B9_4A)
+    static let cardStroke = dynamic(light: 0x64_74_8B, dark: 0x94_A3_B8)
 
-    func updateUIView(_ adView: GADNativeAdView, context: Context) {
-        guard let nativeAd = nativeAd else {
-            adView.isHidden = true
-            return
+    private static func dynamic(light: Int, dark: Int) -> UIColor {
+        UIColor { traits in
+            let hex = traits.userInterfaceStyle == .dark ? dark : light
+            return UIColor(
+                red: CGFloat((hex >> 16) & 0xFF) / 255.0,
+                green: CGFloat((hex >> 8) & 0xFF) / 255.0,
+                blue: CGFloat(hex & 0xFF) / 255.0,
+                alpha: 1.0
+            )
         }
-        adView.isHidden = false
-        populateNativeAd(adView, with: nativeAd)
-    }
-
-    private func setupCompactLayout(_ adView: GADNativeAdView) {
-        let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.layer.cornerRadius = 12
-        container.layer.borderWidth = 1
-        container.layer.borderColor = UIColor.separator.cgColor
-        adView.addSubview(container)
-
-        // 고정 64pt 제약조건 (접근성 모드 고려 시 >= 64, <= 72)
-        NSLayoutConstraint.activate([
-            container.topAnchor.constraint(equalTo: adView.topAnchor),
-            container.bottomAnchor.constraint(equalTo: adView.bottomAnchor),
-            container.leadingAnchor.constraint(equalTo: adView.leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: adView.trailingAnchor),
-            container.heightAnchor.constraint(greaterThanOrEqualToConstant: 64),
-            container.heightAnchor.constraint(lessThanOrEqualToConstant: 72)
-        ])
-        
-        // 아이콘, 헤드라인, CTA 버튼 서브뷰 레이아웃 생략...
     }
 }
 ```
 
-SwiftUI 상위 뷰에서는 추가 패딩을 이중으로 주지 않고 간결하게 사용합니다.
+### 2) SwiftUI 슬롯: 동의·라이프사이클·크기 가드
 
 ```swift
-struct BottomAdBanner: View {
-    let nativeAd: GADNativeAd?
+struct NativeAdSlot: View {
+    let placement: AdPlacement
+    var aboveNavigation = false
+    @EnvironmentObject private var consent: ConsentManager
+    @Environment(\.startupDestinationIsActive) private var destinationIsActive
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @StateObject private var model = NativeAdModel()
+
+    // 1. UMP 동의 + 화면 활성화 + 포그라운드 3대 조건 충족 시에만 로드
+    private var canLoadAds: Bool {
+        consent.canLoadAds && destinationIsActive && scenePhase == .active
+    }
+    private var slotHeight: CGFloat {
+        dynamicTypeSize.isAccessibilitySize ? CompactAdMetrics.maxHeight : CompactAdMetrics.height
+    }
 
     var body: some View {
-        if let ad = nativeAd {
-            CompactNativeAdView(nativeAd: ad)
-                .frame(maxWidth: .infinity)
-                .frame(height: 64)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
+        Group {
+            // 2. 광고가 없으면 슬롯 자체가 렌더되지 않아 높이 0pt로 접힘
+            if canLoadAds, let ad = model.ad {
+                NativeAdContainer(nativeAd: ad)
+                    .frame(height: slotHeight)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, aboveNavigation ? 16 : 0)
+            }
+        }
+        .onAppear { model.loadIfAllowed(canRequestAds: canLoadAds, placement: placement) }
+        .onChange(of: canLoadAds) { allowed in
+            model.loadIfAllowed(canRequestAds: allowed, placement: placement)
         }
     }
 }
@@ -310,36 +331,27 @@ struct BottomAdBanner: View {
 
 **해결책**: 광고주 아이콘이 `null`일 경우 헤드라인 첫 글자를 딴 **모노그램 뱃지(`MonogramDrawable`)**를 대신 그려 넣어 레이아웃 정렬이 무너지지 않도록 방어했습니다.
 
-```kotlin
-val icon = nativeAd.icon
-if (icon != null) {
-    binding.adAppIcon.setImageDrawable(icon.drawable)
-    binding.adAppIcon.visibility = View.VISIBLE
-} else {
-    // 첫 글자 모노그램 폴백
-    val firstChar = nativeAd.headline?.firstOrNull()?.toString() ?: "A"
-    binding.adAppIcon.setImageDrawable(MonogramDrawable(firstChar, context))
-    binding.adAppIcon.visibility = View.VISIBLE
-}
-```
+### 함정 2: AdMob 테스트 검증기의 "MediaView 누락" 오판 방지
 
-### 함정 2: Android 종료 팝업의 AdChoices 마커 겹침 현상
+AdMob SDK는 네이티브 광고에 `MediaView`가 없으면 테스트 빌드에서 "MediaView가 누락되었습니다"라는 경고 팝업을 띄우곤 합니다. 하지만 64dp 컴팩트 스트립은 정책상 이미지/비디오 미디어를 싣지 않는 텍스트+아이콘 전용 지면입니다.
+
+**해결책**: iOS `Info.plist`에 `GADNativeAdValidatorEnabled = false`를 선언하여 불필요한 유효성 검사기 오판을 끄고, 검증은 자체 단위 테스트(`AdSlotContrastTests`)와 스냅샷으로 수행합니다.
+
+### 함정 3: Android 종료 팝업의 AdChoices 마커 겹침
 
 Android의 "뒤로가기 두 번 눌러 앱 종료" 다이얼로그(`FleetExitDialog`) 하단에 네이티브 광고를 넣을 때, Google의 AdChoices 마커(i 모양 아이콘)가 다이얼로그 카드의 둥근 모서리 바깥으로 삐져나가는 시각적 결함이 있었습니다.
 
-**해결책**: 다이얼로그 카드 호스트에 사방 `12dp`의 안전 패딩(`cardPadding`)을 두고, 네이티브 광고 뷰의 `setAdChoicesView()` 위치를 우측 하단에서 우측 상단으로 이동시켜 닫기 버튼 및 모서리와 충돌하지 않도록 조정했습니다.
+**해결책**: 다이얼로그 카드 호스트에 사방 `12dp`의 안전 패딩(`cardPadding`)을 두고, 네이티브 광고 뷰의 `AdChoicesView` 위치를 우측 상단 4dp 인셋으로 고정하여 닫기 버튼 및 모서리와 충돌하지 않도록 조정했습니다.
 
 ---
 
 ## 6. 정리: 무자극 네이티브 광고 체크리스트
 
-모바일 앱에서 광고는 양날의 검입니다. 수익을 위해 넣지만, 유저의 시각적 흐름을 깨뜨리는 순간 앱의 완성도 전체가 의심받게 됩니다.
-
 | 점검 항목 | 기준값 | 실패 시 증상 |
 | :--- | :--- | :--- |
-| **카드 높이** | `64dp` (큰 글씨 `72dp`) | 100dp 이상 부풀어 올라 메인 콘텐츠 침범 |
+| **슬롯 높이** | `64dp/pt` (큰 글씨 `72dp/pt`) | 100dp 이상 부풀어 올라 메인 콘텐츠 침범 |
 | **텍스트 줄 수** | `maxLines = 1` + 말줄임 | 광고 내용에 따라 높이가 들쑥날쑥 팽창 |
-| **로드 실패 처리** | `height = 0.dp` 완전 접힘 | 광고 미로드 시 화면 하단에 휑한 빈 상자 노출 |
+| **미로드/실패 처리** | `height = 0.dp` 완전 접힘 | 광고 미로드 시 화면 하단에 휑한 빈 상자 노출 |
 | **화면 여백** | 좌우 `16dp` 인셋 | 화면 베젤 끝까지 닿아 답답한 렌더링 |
 | **사운드 정책** | `setAppMuted(true)` | 공공장소/독서실에서 비디오 광고 소리 테러 |
 
