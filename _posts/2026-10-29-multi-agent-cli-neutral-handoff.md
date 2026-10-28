@@ -33,19 +33,25 @@ Claude Code가 10단계 중 7단계까지 작업을 진행하다가 토큰 한�
 
 우리는 모든 세션 ID와 대화 기록을 신뢰하지 않기로 했습니다. 오직 하나의 파일만이 진실의 원천(Single Source of Truth)입니다.
 
-$$\text{상태 파일 위치: } \texttt{<git-common-dir>/fleet-state/tasks/<task\_id>.json}$$
+> 📍 **상태 파일 위치**: `<git-common-dir>/fleet-state/tasks/<task_id>.json`
 
-```mermaid
-flowchart LR
-    subgraph RepoWorktrees["Git Common Directory (.git/fleet-state)"]
-        State["tasks/<task_id>.json\n(소유자 / 상태 / 검증 증거 / 모델 사다리)"]
-    end
-    
-    Claude["Claude Code\n(작업 진행 중 토큰 소진)"] -->|"handoff --reason QUOTA"| State
-    Codex["Codex CLI\n(작업 인수 및 구현)"] -->|"takeover <task_id>"| State
-    AGY["Antigravity (agy)\n(테스트 실행 및 배포)"] -->|"takeover <task_id>"| State
-    
-    State -.->|"HEAD 변경 시 자동 무효화"| Stale["STALE_EVIDENCE 감지"]
+```text
+ ┌────────────────────────────────────────────────────────┐
+ │      Git 공통 디렉터리 (.git/fleet-state/tasks/)       │
+ │                                                        │
+ │   task_photo_watermark.json                            │
+ │   ├─ 소유자: claude-code / mac-mini-m4                 │
+ │   ├─ 상태: ACTIVE → HANDED_OFF                         │
+ │   ├─ 검증 증거: android_test=PASS                      │
+ │   └─ 사유: QUOTA_EXHAUSTED                             │
+ └───────▲────────────────────────▲───────────────▲───────┘
+         │                        │               │
+  (handoff --reason)       (takeover)      (takeover)
+         │                        │               │
+ ┌───────┴──────┐         ┌───────┴──────┐ ┌──────┴──────┐
+ │ Claude Code  │         │  Codex CLI   │ │ Antigravity │
+ │ (토큰 한도)  │         │ (구현 이어감)│ │ (검증·배포) │
+ └──────────────┘         └──────────────┘ └─────────────┘
 ```
 
 Git worktree를 쓰더라도 `<git-common-dir>`은 모든 작업 트리가 공유하므로 브랜치가 갈라져 있어도 상태가 동기화됩니다.
@@ -168,21 +174,22 @@ project_doc_max_bytes = 262144  # 기본 32KB -> 256KB로 확장
 - **규칙**: Claude Code가 작성한 PR은 OpenAI Codex 또는 Google Gemini가 읽기 전용으로 검토한다.
 - **원칙**: 검토 모델이 지적한 결함이라도 맹신하지 않고, **실제 테스트 코드나 컴파일러 오류로 사실 확인(Fact Check)**된 것만 수정한다. (검토 모델 역시 환각을 일으키기 때문입니다.)
 
-```mermaid
-sequenceDiagram
-    participant Claude as Claude Code (작성자)
-    participant Git as GitHub PR
-    participant Codex as Codex CLI (검토자)
-    participant CI as CI / Safe-Merge Gate
-
-    Claude->>Git: feat: 보상형 광고 opt-in 구현 PR 생성
-    Note over Git: PR #123 오픈
-    Codex->>Git: PR 코드 및 Diff 읽기 전용 분석
-    Codex-->>Claude: "Android 액티비티 onDestroy에서 리스너 누수 가능성 지적"
-    Claude->>Claude: 단위 테스트로 누수 재현 검증 (Fact Check)
-    Claude->>Git: 리스너 약한 참조(WeakReference) 패치 커밋 푸시
-    CI->>CI: Main CI push 상태 확인 & safe-merge 통과
-    CI->>Git: main 자동 머지 완료
+```text
+ [Claude Code (작성자)]          [GitHub PR #123]          [Codex CLI (검토자)]
+          │                             │                           │
+          ├─── 1. 기능 구현 PR 오픈 ────>│                           │
+          │                             │<── 2. 코드 Diff 읽기 ─────┤
+          │                             │    (읽기 전용 분석)       │
+          │                             ├── 3. "액티비티 누수 지적" ─>│
+          │<── 4. 피드백 확인 ──────────┤                           │
+          │                             │                           │
+  [단위 테스트로 팩트체크]                │                           │
+          │                             │                           │
+          ├─── 5. 수정 커밋 푸시 ───────>│                           │
+          │                             │                           │
+          ▼                             ▼                           ▼
+          ──────────────────── [CI & Safe-Merge 게이트] ─────────────
+          └─ 최신 커밋 CI PASS 확인 후 main 브랜치 자동 머지 승인
 ```
 
 또한 머지 전에는 반드시 `./fleet safe-merge`를 통과하도록 했습니다. 이 도구는 **"새로 푸시된 최신 커밋의 CI가 실제로 시작되었는지 확인하고 머지"**합니다. (이전 커밋의 녹색 CI를 읽고 설익은 코드를 머지하던 과거의 순서 사고를 차단한 것입니다.)
